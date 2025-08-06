@@ -34,7 +34,7 @@ def generate_number():
                 digits[0], digits[i] = digits[i], digits[0]
                 break
     return digits
-# správný výstup hráče
+# správný vstup hráče
 def is_valid_input(user_input):
     return (
         user_input.isdigit() and
@@ -108,4 +108,5 @@ def play_game():
             break
 
 #  Spuštění hry
+
 play_game()
