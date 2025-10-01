@@ -1,112 +1,158 @@
-#knihovny
-import random
-import time
-
-#obarvení
-def colored_text(text, color_code):
-      return f"\033[38;5;{color_code}m{text}\033[0m"
-
-link = colored_text('-', 125) * 50
-print(link)
-darts = colored_text(">", 125) * 3
-
-#hlavička + úvod
 print("""
 main.py: druhý projekt do Engeto Online Python Akademie
 
 author: Lenka Trachtová
 email: lenkatrachtova@email.cz
 """)
-print(link)
-print("Hi there!")
-print(link)
-print('''I've generated a random 4 digit number for you.
-Let's play a bulls and cows game.''')
-print(link)
 
-#  náhodné 4-ciferné číslo jako list číslic
-def generate_number():
-    digits = random.sample(range(0, 10), 4)  # náhodně vybere 4 různé číslice
+import random
+import time
+
+DIGIT_COUNT = 4
+
+def colored_text(text, color_code) -> str:
+      '''Returns text formatted with ANSI color code.'''
+      return f"\033[38;5;{color_code}m{text}\033[0m"
+
+def generate_number() -> list[int]:
+    """ 
+    Generates a random number with unique digits. The number does not start with zero. The length of the
+    number is defined by the global constant DIGIT_COUNT.
+
+    Returns: list[int]: Int representing the secret number with unique digits.
+    """
+    digits = random.sample(range(0, 10), DIGIT_COUNT)
     if digits[0] == 0:
-        # Pokud první číslice je 0, vyměníme ji, aby číslo nezačínalo nulou
-        for i in range(1, 4):
+        for i in range(1, DIGIT_COUNT):
             if digits[i] != 0:
                 digits[0], digits[i] = digits[i], digits[0]
                 break
     return digits
-# správný vstup hráče
-def is_valid_input(user_input):
+
+def is_valid_input(user_input) -> bool:
+    """
+    Checks if the player's input is a valid number with unique digits.
+    The required length is defined by the global constant DIGIT_COUNT.
+
+    Parameters:
+        user_input (str): The input entered by the player.
+
+    Returns:
+        bool: True if the input is valid, False otherwise.
+    """
     return (
         user_input.isdigit() and
-        len(user_input) == 4 and
-        len(set(user_input)) == 4 and 
+        len(user_input) == DIGIT_COUNT and
+        len(set(user_input)) == DIGIT_COUNT and 
         user_input[0] != "0"
     )
 
-#jednotné množné č.
-def pluralize(count, singular, plural):
-    return f"{count} {singular if count == 1 else plural}"
+def pluralize(count: int, singular: str, suffix: str = "s") -> str:
+    """
+    Returns the word in singular or plural form based on count.
+    
+    Parameters:
+        count (int): The number to determine singular/plural.
+        singular (str): The base word in singular form.
+        suffix (str): Optional suffix for plural form (default is 's').
+    
+    Returns:
+        str: Formatted string with count and correct word form.
+    """
+    word = singular if count == 1 else singular + suffix
+    return f"{count} {word}"
 
-#  hodnocení pokusů hráče
-def evaluate_guess(secret, guess):
+def evaluate_guess(secret: list[int], guess: list[int]) -> tuple[int, int]:
+    '''
+    Compares the player's guess with the secret number and returns the number of bulls and cows.
+
+    Bulls = correct digit in correct position.
+    Cows = correct digit in wrong position.
+
+    Parameters:
+        secret_number (list[int]): The secret number as a list of digits.
+        player_guess (list[int]): The player's guess as a list of digits.
+
+    Returns:
+        tuple[int, int]: Number of bulls and cows.
+    ''' 
     bulls = 0
     cows = 0
 
-    # Pomocné seznamy
-    secret_unused = []
-    guess_unused = []
+    unmatched_secret = []
+    unmatched_guess = []
 
-    # 1️ hledání bulls
-    for i in range(4):
-        if guess[i] == secret[i]:
+    for position_index, (secret_digit, guess_digit) in enumerate(zip(secret, guess)):
+        if secret_digit == guess_digit:
             bulls += 1
         else:
-            secret_unused.append(secret[i])
-            guess_unused.append(guess[i])
+            unmatched_secret.append(secret_digit)
+            unmatched_guess.append(guess_digit)
 
-    # 2️ hledání cows (správná číslice, špatné místo)
-    for digit in guess_unused:
-        if digit in secret_unused:
+    for digit in unmatched_guess:
+        if digit in unmatched_secret:
             cows += 1
-            secret_unused.remove(digit)  # Odstraň, aby se nezapočítala vícekrát
+            unmatched_secret.remove(digit)
 
-    return bulls, cows    
+    return bulls, cows
 
-#  Hlavní herní smyčka
-def play_game():
+def play_game() -> None:
+    '''
+    Starts the Bulls and Cows game.
+    Generates a secret number with unique digits, handles user input, evaluates guesses,
+    tracks the number of attempts and measures the time taken to solve the game.
+
+    Returns:
+    none
+    '''
     secret = generate_number()
     attempts = 0
-    #časomíra
     start_time = time.time()
 
     while True:
-        user_input = input("Enter a number: ")
+        try:
+            user_input = input("Enter a number: ")
+        except (KeyboardInterrupt, EOFError):
+            print("\nGame interrupted. Goodbye!")
+            break
+        
         if not is_valid_input(user_input):
-            print("Please enter a valid 4-digit number.")
-            print(link)
+            print(f"Please enter a valid {DIGIT_COUNT}-digit number.")
+            print(line)
             continue
 
         guess = [int(d) for d in user_input]
         attempts += 1
         bulls, cows = evaluate_guess(secret, guess)
         print(f"{darts} {user_input}")
-        print(f"{pluralize(bulls, 'bull', 'bulls')}, {pluralize(cows, 'cow', 'cows')}")
-        print(link)
+        print(f"{pluralize(bulls, "bull")}, {pluralize(cows, "cow")}")
+        print(line)
 
-# vyhodnocení bulls a cows.
-        if bulls == 4:
-            end_time = time.time()  #  konec časomíry
+        if bulls == DIGIT_COUNT:
+            end_time = time.time()
             elapsed_time = end_time - start_time
-            print("Correct, you've guessed the right number in 4 guesses!")
-            print(link)
+            print(colored_text("Congratulations!", 125))
+            print(line)
             print(f"Secret number is: {''.join(map(str, secret))}")
-            print(f"Your attempts: {attempts}")
+            print(f"Your {pluralize(attempts, "attempt")}: {attempts}")
             print(f"Your time: {round(elapsed_time, 2)} sec.")
-            print(link)
-            print("That's amazing!")
-            print(link)
+            print(line)
+            print(f"{name} that's amazing!")
+            print(line)
             break
 
-#  Spuštění hry
+line = colored_text("-", 125) * 50
+darts = colored_text(">", 125) * 3
+name = input("enter your name: ")
+print(line)
+print(f"Hi {name}!")
+print(line)
+print(f'''I've generated a random {DIGIT_COUNT} digit number for you.
+Let's play a bulls and cows game.''')
+print(line)
+
+if __name__ == "__main__":
+    play_game()
 
 play_game()
+
