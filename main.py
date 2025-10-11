@@ -8,8 +8,6 @@ email: lenkatrachtova@email.cz
 import random
 import time
 
-DIGIT_COUNT = 4
-
 def colored_text(text, color_code) -> str:
       '''Returns text formatted with ANSI color code.'''
       return f"\033[38;5;{color_code}m{text}\033[0m"
@@ -141,6 +139,7 @@ def play_game() -> None:
             print(line)
             break
 
+DIGIT_COUNT = 4
 line = colored_text("-", 125) * 50
 darts = colored_text(">", 125) * 3
 name = input("enter your name: ")
@@ -155,4 +154,5 @@ if __name__ == "__main__":
     play_game()
 
 play_game()
+
 
