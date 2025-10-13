@@ -16,7 +16,6 @@ def generate_number() -> list[int]:
     """ 
     Generates a random number with unique digits. The number does not start with zero. The length of the
     number is defined by the global constant DIGIT_COUNT.
-
     Returns: list[int]: Int representing the secret number with unique digits.
     """
     digits = random.sample(range(0, 10), DIGIT_COUNT)
@@ -31,11 +30,9 @@ def is_valid_input(user_input) -> bool:
     """
     Checks if the player's input is a valid number with unique digits.
     The required length is defined by the global constant DIGIT_COUNT.
-
-    Parameters:
+        Parameters:
         user_input (str): The input entered by the player.
-
-    Returns:
+        Returns:
         bool: True if the input is valid, False otherwise.
     """
     return (
@@ -48,13 +45,11 @@ def is_valid_input(user_input) -> bool:
 def pluralize(count: int, singular: str, suffix: str = "s") -> str:
     """
     Returns the word in singular or plural form based on count.
-    
-    Parameters:
+        Parameters:
         count (int): The number to determine singular/plural.
         singular (str): The base word in singular form.
         suffix (str): Optional suffix for plural form (default is 's').
-    
-    Returns:
+        Returns:
         str: Formatted string with count and correct word form.
     """
     word = singular if count == 1 else singular + suffix
@@ -63,15 +58,12 @@ def pluralize(count: int, singular: str, suffix: str = "s") -> str:
 def evaluate_guess(secret: list[int], guess: list[int]) -> tuple[int, int]:
     '''
     Compares the player's guess with the secret number and returns the number of bulls and cows.
-
     Bulls = correct digit in correct position.
     Cows = correct digit in wrong position.
-
-    Parameters:
+        Parameters:
         secret_number (list[int]): The secret number as a list of digits.
         player_guess (list[int]): The player's guess as a list of digits.
-
-    Returns:
+        Returns:
         tuple[int, int]: Number of bulls and cows.
     ''' 
     bulls = 0
@@ -99,7 +91,6 @@ def play_game() -> None:
     Starts the Bulls and Cows game.
     Generates a secret number with unique digits, handles user input, evaluates guesses,
     tracks the number of attempts and measures the time taken to solve the game.
-
     Returns:
     none
     '''
@@ -152,7 +143,3 @@ print(line)
 
 if __name__ == "__main__":
     play_game()
-
-play_game()
-
-
