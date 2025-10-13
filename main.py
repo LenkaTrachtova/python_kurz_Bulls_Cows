@@ -1,6 +1,5 @@
 print("""
 main.py: druhý projekt do Engeto Online Python Akademie
-
 author: Lenka Trachtová
 email: lenkatrachtova@email.cz
 """)
