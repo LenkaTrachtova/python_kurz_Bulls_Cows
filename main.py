@@ -7,13 +7,16 @@ email: lenkatrachtova@email.cz
 import random
 import time
 
+DIGIT_COUNT = 4
+
 def colored_text(text, color_code) -> str:
-      '''Returns text formatted with ANSI color code.'''
-      return f"\033[38;5;{color_code}m{text}\033[0m"
+    """Returns text formatted with ANSI color code."""
+    return f"\033[38;5;{color_code}m{text}\033[0m"
 
 def generate_number() -> list[int]:
     """ 
-    Generates a random number with unique digits. The number does not start with zero. The length of the
+    Generates a random number with unique digits.
+    The number does not start with zero. The length of the
     number is defined by the global constant DIGIT_COUNT.
     Returns: list[int]: Int representing the secret number with unique digits.
     """
@@ -25,7 +28,7 @@ def generate_number() -> list[int]:
                 break
     return digits
 
-def is_valid_input(user_input) -> bool:
+def is_valid_input(user_input: str) -> bool:
     """
     Checks if the player's input is a valid number with unique digits.
     The required length is defined by the global constant DIGIT_COUNT.
@@ -52,10 +55,10 @@ def pluralize(count: int, singular: str, suffix: str = "s") -> str:
         str: Formatted string with count and correct word form.
     """
     word = singular if count == 1 else singular + suffix
-    return f"{count} {word}"
+    return f"{count} {singular}{'' if count == 1 else suffix}"
 
 def evaluate_guess(secret: list[int], guess: list[int]) -> tuple[int, int]:
-    '''
+    """
     Compares the player's guess with the secret number and returns the number of bulls and cows.
     Bulls = correct digit in correct position.
     Cows = correct digit in wrong position.
@@ -64,7 +67,7 @@ def evaluate_guess(secret: list[int], guess: list[int]) -> tuple[int, int]:
         player_guess (list[int]): The player's guess as a list of digits.
         Returns:
         tuple[int, int]: Number of bulls and cows.
-    ''' 
+    """ 
     bulls = 0
     cows = 0
 
@@ -86,13 +89,14 @@ def evaluate_guess(secret: list[int], guess: list[int]) -> tuple[int, int]:
     return bulls, cows
 
 def play_game() -> None:
-    '''
+    """
     Starts the Bulls and Cows game.
-    Generates a secret number with unique digits, handles user input, evaluates guesses,
-    tracks the number of attempts and measures the time taken to solve the game.
+    Generates a secret number with unique digits,
+    handles user input, evaluates guesses,tracks the number of attempts
+    and measures the time taken to solve the game.
     Returns:
     none
-    '''
+    """
     secret = generate_number()
     attempts = 0
     start_time = time.time()
@@ -113,7 +117,7 @@ def play_game() -> None:
         attempts += 1
         bulls, cows = evaluate_guess(secret, guess)
         print(f"{darts} {user_input}")
-        print(f"{pluralize(bulls, "bull")}, {pluralize(cows, "cow")}")
+        print(f"{pluralize(bulls, 'bull')}, {pluralize(cows, 'cow')}")
         print(line)
 
         if bulls == DIGIT_COUNT:
@@ -122,14 +126,13 @@ def play_game() -> None:
             print(colored_text("Congratulations!", 125))
             print(line)
             print(f"Secret number is: {''.join(map(str, secret))}")
-            print(f"Your {pluralize(attempts, "attempt")}: {attempts}")
+            print(f"Your {pluralize(attempts, 'attempt')}: {attempts}")
             print(f"Your time: {round(elapsed_time, 2)} sec.")
             print(line)
             print(f"{name} that's amazing!")
             print(line)
             break
 
-DIGIT_COUNT = 4
 line = colored_text("-", 125) * 50
 darts = colored_text(">", 125) * 3
 name = input("enter your name: ")
